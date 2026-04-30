@@ -1,0 +1,11 @@
+name: api_livros
+description: API REST de biblioteca com Dart, Shelf, shelf_router e SQLite.
+version: 1.0.0
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  shelf: any
+  shelf_router: any
+  sqlite3: any

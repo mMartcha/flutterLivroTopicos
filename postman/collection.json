@@ -1,0 +1,290 @@
+{
+  "info": {
+    "_postman_id": "b6b94746-d0f2-461a-9b68-e894a86a3cdf",
+    "name": "Biblioteca API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "29770566"
+  },
+  "item": [
+    {
+      "name": "Autores",
+      "item": []
+    },
+    {
+      "name": "Livros",
+      "item": []
+    },
+    {
+      "name": "Listar autores",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/autores",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "autores"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET \"{{base_url}}/autores\""
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar autor por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/autores/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "autores",
+            "1"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET \"{{base_url}}/autores/1\""
+      },
+      "response": []
+    },
+    {
+      "name": "Criar autor",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nome\": \"Machado de Assis\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/autores",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "autores"
+          ]
+        },
+        "description": "Generated from cURL: curl -X POST \"{{base_url}}/autores\" -H \"Content-Type: application/json\" -d \"{\\\"nome\\\": \\\"Machado de Assis\\\"}\""
+      },
+      "response": []
+    },
+    {
+      "name": "Atualizar autor",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"nome\": \"Machado de Assis Atualizado\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/autores/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "autores",
+            "1"
+          ]
+        },
+        "description": "Generated from cURL: curl -X PUT \"{{base_url}}/autores/1\" -H \"Content-Type: application/json\" -d \"{\\\"nome\\\": \\\"Machado de Assis Atualizado\\\"}\""
+      },
+      "response": []
+    },
+    {
+      "name": "Remover autor",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/autores/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "autores",
+            "1"
+          ]
+        },
+        "description": "Generated from cURL: curl -X DELETE \"{{base_url}}/autores/1\""
+      },
+      "response": []
+    },
+    {
+      "name": "Listar livros",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/livros",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "livros"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET \"{{base_url}}/livros\""
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar livro por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/livros/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "livros",
+            "1"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET \"{{base_url}}/livros/1\""
+      },
+      "response": []
+    },
+    {
+      "name": "Listar livros de um autor",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/autores/1/livros",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "autores",
+            "1",
+            "livros"
+          ]
+        },
+        "description": "Generated from cURL: curl -X GET \"{{base_url}}/autores/1/livros\""
+      },
+      "response": []
+    },
+    {
+      "name": "Criar livro",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\": \"Dom Casmurro\", \"ano\": 1899, \"autorId\": 1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/livros",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "livros"
+          ]
+        },
+        "description": "Generated from cURL: curl -X POST \"{{base_url}}/livros\" -H \"Content-Type: application/json\" -d \"{\\\"titulo\\\": \\\"Dom Casmurro\\\", \\\"ano\\\": 1899, \\\"autorId\\\": 1}\""
+      },
+      "response": []
+    },
+    {
+      "name": "Atualizar livro",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "disabled": false
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"titulo\": \"Dom Casmurro Atualizado\", \"ano\": 1900, \"autorId\": 1}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/livros/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "livros",
+            "1"
+          ]
+        },
+        "description": "Generated from cURL: curl -X PUT \"{{base_url}}/livros/1\" -H \"Content-Type: application/json\" -d \"{\\\"titulo\\\": \\\"Dom Casmurro Atualizado\\\", \\\"ano\\\": 1900, \\\"autorId\\\": 1}\""
+      },
+      "response": []
+    },
+    {
+      "name": "Remover livro",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/livros/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "livros",
+            "1"
+          ]
+        },
+        "description": "Generated from cURL: curl -X DELETE \"{{base_url}}/livros/1\""
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    }
+  ]
+}
