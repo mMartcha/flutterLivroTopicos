@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../models/autor.dart';
 import '../models/livro.dart';
 import '../services/autor_service.dart';
+import '../theme/app_theme.dart';
 import 'formulario_autor_page.dart';
 
 class DetalheAutorPage extends StatefulWidget {
@@ -68,7 +69,8 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
   void abrirEdicao() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FormularioAutorPage(autor: autor)),
+      MaterialPageRoute(
+          builder: (context) => FormularioAutorPage(autor: autor)),
     ).then((resultado) async {
       // Se salvou a edicao, buscamos o autor atualizado na API e redesenhamos.
       if (resultado == true) {
@@ -80,7 +82,7 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
         } catch (erro) {
           mostrarMensagem(
             'Editado, mas nao foi possivel recarregar os dados.',
-            Colors.red,
+            AppColors.danger,
           );
         }
       }
@@ -107,7 +109,10 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
                 excluir(); // executa a exclusao de fato
               },
               // Texto em vermelho para destacar que e uma acao perigosa.
-              child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+              child: const Text(
+                'Excluir',
+                style: TextStyle(color: AppColors.danger),
+              ),
             ),
           ],
         );
@@ -126,7 +131,7 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
 
       // mounted confirma que a tela ainda esta na tela antes de usar o context.
       if (!mounted) return;
-      mostrarMensagem('Autor excluido com sucesso!', Colors.green);
+      mostrarMensagem('Autor excluido com sucesso!', AppColors.success);
 
       // Volta para a lista enviando "true" para ela recarregar.
       Navigator.pop(context, true);
@@ -136,7 +141,7 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
       setState(() {
         excluindo = false;
       });
-      mostrarMensagem(erro.toString(), Colors.red);
+      mostrarMensagem(erro.toString(), AppColors.danger);
     }
   }
 
@@ -179,17 +184,49 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        montarLinha('ID', '${autor.id}'),
-        const Divider(),
-        montarLinha('Nome', autor.nome),
-        const Divider(),
-        montarLinha('Nacionalidade', autor.nacionalidade),
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceElevated,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(
+                Icons.person,
+                color: AppColors.primarySoft,
+                size: 34,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                autor.nome,
+                style: const TextStyle(
+                  color: AppColors.text,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 16),
+              montarLinha('ID', '${autor.id}'),
+              const Divider(),
+              montarLinha('Nome', autor.nome),
+              const Divider(),
+              montarLinha('Nacionalidade', autor.nacionalidade),
+            ],
+          ),
+        ),
         const SizedBox(height: 24),
 
         // Titulo da secao de livros.
         const Text(
           'Livros deste autor',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            color: AppColors.text,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
         ),
         const SizedBox(height: 8),
 
@@ -206,11 +243,17 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
     }
 
     if (erroLivros != null) {
-      return Text(erroLivros!, style: const TextStyle(color: Colors.red));
+      return Text(
+        erroLivros!,
+        style: const TextStyle(color: AppColors.danger),
+      );
     }
 
     if (livrosDoAutor.isEmpty) {
-      return const Text('Este autor ainda não tem livros cadastrados.');
+      return const Text(
+        'Este autor ainda não tem livros cadastrados.',
+        style: TextStyle(color: AppColors.textMuted),
+      );
     }
 
     // Aqui a lista e SO LEITURA: nao tem botoes de editar/excluir.
@@ -220,7 +263,10 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
         return Card(
           child: ListTile(
             leading: const Icon(Icons.menu_book),
-            title: Text(livro.titulo),
+            title: Text(
+              livro.titulo,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
             subtitle: Text('Ano: ${livro.ano}'),
           ),
         );
@@ -236,10 +282,20 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
         children: [
           Text(
             '$rotulo: ',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: const TextStyle(
+              color: AppColors.textMuted,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
           Expanded(
-            child: Text(valor, style: const TextStyle(fontSize: 16)),
+            child: Text(
+              valor,
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 16,
+              ),
+            ),
           ),
         ],
       ),

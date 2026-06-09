@@ -6,11 +6,13 @@
 // na tela de detalhe do livro (modo edicao).
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/autor.dart';
 import '../models/livro.dart';
 import '../services/autor_service.dart';
 import '../services/livro_service.dart';
+import '../theme/app_theme.dart';
 
 class FormularioLivroPage extends StatefulWidget {
   // Parametro OPCIONAL:
@@ -131,7 +133,7 @@ class _FormularioLivroPageState extends State<FormularioLivroPage> {
       if (!mounted) return;
       mostrarMensagem(
         modoEdicao ? 'Atualizado com sucesso' : 'Criado com sucesso',
-        Colors.green,
+        AppColors.success,
       );
 
       Navigator.pop(context, true);
@@ -139,7 +141,7 @@ class _FormularioLivroPageState extends State<FormularioLivroPage> {
       setState(() {
         salvando = false; // libera o botao de novo
       });
-      mostrarMensagem(erro.toString(), Colors.red);
+      mostrarMensagem(erro.toString(), AppColors.danger);
     }
   }
 
@@ -177,7 +179,10 @@ class _FormularioLivroPageState extends State<FormularioLivroPage> {
               Text(
                 erroAutores!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -197,92 +202,132 @@ class _FormularioLivroPageState extends State<FormularioLivroPage> {
   Widget montarFormulario() {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Form(
-        key: chaveFormulario,
-        child: ListView(
-          children: [
-            // Campo Titulo (obrigatorio).
-            TextFormField(
-              controller: controllerTitulo,
-              decoration: const InputDecoration(labelText: 'Titulo'),
-              validator: (valor) {
-                if (valor == null || valor.trim().isEmpty) {
-                  return 'Informe o titulo';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 12),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Form(
+          key: chaveFormulario,
+          child: ListView(
+            children: [
+              const Text(
+                'Dados do livro',
+                style: TextStyle(
+                  color: AppColors.text,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Campo Titulo (obrigatorio).
+              TextFormField(
+                controller: controllerTitulo,
+                decoration: const InputDecoration(
+                  labelText: 'Titulo',
+                  prefixIcon: Icon(Icons.title),
+                ),
+                validator: (valor) {
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'Informe o titulo';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
 
-            // Campo Ano (obrigatorio, precisa ser numero inteiro).
-            TextFormField(
-              controller: controllerAno,
-              decoration: const InputDecoration(labelText: 'Ano'),
-              keyboardType: TextInputType.number,
-              validator: (valor) {
-                if (valor == null || valor.trim().isEmpty) {
-                  return 'Informe o ano';
-                }
-                if (int.tryParse(valor) == null) {
-                  return 'Ano deve ser um numero inteiro';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 12),
+              // Campo Ano (obrigatorio, precisa ser numero inteiro).
+              TextFormField(
+                controller: controllerAno,
+                decoration: const InputDecoration(
+                  labelText: 'Ano',
+                  prefixIcon: Icon(Icons.calendar_today),
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(4),
+                ],
+                validator: (valor) {
+                  final texto = valor?.trim() ?? '';
+                  final anoAtual = DateTime.now().year;
+                  final ano = int.tryParse(texto);
 
-            // Campo Autor: um DropdownButtonFormField<int>.
-            // Cada opcao (DropdownMenuItem) guarda o id do autor como "value" e
-            // mostra o nome dele para o usuario. O <int> diz que o valor
-            // escolhido e um id (numero) de autor.
-            DropdownButtonFormField<int>(
-              // initialValue: qual autor ja vem selecionado ao abrir o form.
-              // Em modo edicao, e o autor atual do livro; em criacao, e null.
-              initialValue: autorIdSelecionado,
-              decoration: const InputDecoration(labelText: 'Autor'),
-              // Monta uma opcao para cada autor da lista.
-              items: autores.map((autor) {
-                return DropdownMenuItem<int>(
-                  value: autor.id,
-                  child: Text(autor.nome),
-                );
-              }).toList(),
-              // Roda quando o usuario escolhe um autor no dropdown.
-              onChanged: (novoValor) {
-                setState(() {
-                  autorIdSelecionado = novoValor;
-                });
-              },
-              // Autor e obrigatorio: se nada foi escolhido, mostra erro.
-              validator: (valor) {
-                if (valor == null) {
-                  return 'Selecione um autor';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
+                  if (texto.isEmpty) {
+                    return 'Informe o ano';
+                  }
+                  if (ano == null) {
+                    return 'Ano deve ser um numero inteiro';
+                  }
+                  if (texto.length != 4) {
+                    return 'Ano deve ter 4 digitos';
+                  }
+                  if (ano >= anoAtual) {
+                    return 'Ano deve ser menor que $anoAtual';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
 
-            // Botao Salvar: mostra loading e fica TRAVADO enquanto salva
-            // (onPressed null = botao desabilitado). Isso impede envio duplicado.
-            ElevatedButton(
-              onPressed: salvando ? null : salvar,
-              child: salvando
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Salvar'),
-            ),
-            const SizedBox(height: 8),
+              // Campo Autor: um DropdownButtonFormField<int>.
+              // Cada opcao (DropdownMenuItem) guarda o id do autor como "value" e
+              // mostra o nome dele para o usuario. O <int> diz que o valor
+              // escolhido e um id (numero) de autor.
+              DropdownButtonFormField<int>(
+                // initialValue: qual autor ja vem selecionado ao abrir o form.
+                // Em modo edicao, e o autor atual do livro; em criacao, e null.
+                initialValue: autorIdSelecionado,
+                decoration: const InputDecoration(
+                  labelText: 'Autor',
+                  prefixIcon: Icon(Icons.person_outline),
+                ),
+                // Monta uma opcao para cada autor da lista.
+                items: autores.map((autor) {
+                  return DropdownMenuItem<int>(
+                    value: autor.id,
+                    child: Text(autor.nome),
+                  );
+                }).toList(),
+                // Roda quando o usuario escolhe um autor no dropdown.
+                onChanged: (novoValor) {
+                  setState(() {
+                    autorIdSelecionado = novoValor;
+                  });
+                },
+                // Autor e obrigatorio: se nada foi escolhido, mostra erro.
+                validator: (valor) {
+                  if (valor == null) {
+                    return 'Selecione um autor';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
 
-            // Botao Cancelar: volta sem salvar.
-            TextButton(
-              onPressed: salvando ? null : () => Navigator.pop(context),
-              child: const Text('Cancelar'),
-            ),
-          ],
+              // Botao Salvar: mostra loading e fica TRAVADO enquanto salva
+              // (onPressed null = botao desabilitado). Isso impede envio duplicado.
+              ElevatedButton(
+                onPressed: salvando ? null : salvar,
+                child: salvando
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Salvar'),
+              ),
+              const SizedBox(height: 8),
+
+              // Botao Cancelar: volta sem salvar.
+              TextButton(
+                onPressed: salvando ? null : () => Navigator.pop(context),
+                child: const Text('Cancelar'),
+              ),
+            ],
+          ),
         ),
       ),
     );

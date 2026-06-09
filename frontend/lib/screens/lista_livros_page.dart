@@ -10,6 +10,7 @@ import '../models/autor.dart';
 import '../models/livro.dart';
 import '../services/autor_service.dart';
 import '../services/livro_service.dart';
+import '../theme/app_theme.dart';
 import 'detalhe_livro_page.dart';
 import 'formulario_livro_page.dart';
 
@@ -136,7 +137,10 @@ class _ListaLivrosPageState extends State<ListaLivrosPage> {
               Text(
                 mensagemErro!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -150,7 +154,12 @@ class _ListaLivrosPageState extends State<ListaLivrosPage> {
     }
 
     if (livros.isEmpty) {
-      return const Center(child: Text('Nenhum livro encontrado.'));
+      return const Center(
+        child: Text(
+          'Nenhum livro encontrado.',
+          style: TextStyle(color: AppColors.textMuted),
+        ),
+      );
     }
 
     return ListView.builder(
@@ -161,10 +170,31 @@ class _ListaLivrosPageState extends State<ListaLivrosPage> {
 
         return Card(
           child: ListTile(
-            title: Text(livro.titulo),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            leading: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.chip,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.menu_book),
+            ),
+            title: Text(
+              livro.titulo,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
             // Mostramos o NOME do autor (e nao o autorId cru) + o ano.
-            subtitle: Text('Autor: ${nomeDoAutor(livro.autorId)}  |  Ano: ${livro.ano}'),
-            trailing: const Icon(Icons.chevron_right),
+            subtitle: Text(
+              'Autor: ${nomeDoAutor(livro.autorId)}  |  Ano: ${livro.ano}',
+            ),
+            trailing: const Icon(
+              Icons.chevron_right,
+              color: AppColors.textSoft,
+            ),
             onTap: () => abrirDetalhe(livro),
           ),
         );

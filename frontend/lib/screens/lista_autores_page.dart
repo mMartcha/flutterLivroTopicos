@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../models/autor.dart';
 import '../services/autor_service.dart';
+import '../theme/app_theme.dart';
 import 'detalhe_autor_page.dart';
 import 'formulario_autor_page.dart';
 
@@ -116,7 +117,10 @@ class _ListaAutoresPageState extends State<ListaAutoresPage> {
               Text(
                 mensagemErro!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(
+                  color: AppColors.textMuted,
+                  fontSize: 16,
+                ),
               ),
               const SizedBox(height: 16),
               // Botao para tentar carregar de novo.
@@ -131,7 +135,12 @@ class _ListaAutoresPageState extends State<ListaAutoresPage> {
     }
 
     if (autores.isEmpty) {
-      return const Center(child: Text('Nenhum autor encontrado.'));
+      return const Center(
+        child: Text(
+          'Nenhum autor encontrado.',
+          style: TextStyle(color: AppColors.textMuted),
+        ),
+      );
     }
 
     // ListView.builder monta a lista item por item (eficiente para listas grandes).
@@ -143,9 +152,28 @@ class _ListaAutoresPageState extends State<ListaAutoresPage> {
 
         return Card(
           child: ListTile(
-            title: Text(autor.nome),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            leading: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.chip,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.person),
+            ),
+            title: Text(
+              autor.nome,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
             subtitle: Text('Nacionalidade: ${autor.nacionalidade}'),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const Icon(
+              Icons.chevron_right,
+              color: AppColors.textSoft,
+            ),
             onTap: () => abrirDetalhe(autor),
           ),
         );

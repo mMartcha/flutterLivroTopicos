@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../models/autor.dart';
 import '../services/autor_service.dart';
+import '../theme/app_theme.dart';
 
 class FormularioAutorPage extends StatefulWidget {
   // Parametro OPCIONAL:
@@ -88,7 +89,7 @@ class _FormularioAutorPageState extends State<FormularioAutorPage> {
       if (!mounted) return;
       mostrarMensagem(
         modoEdicao ? 'Atualizado com sucesso' : 'Criado com sucesso',
-        Colors.green,
+        AppColors.success,
       );
 
       // Volta para a tela anterior enviando "true" (deu certo, recarregue).
@@ -98,7 +99,7 @@ class _FormularioAutorPageState extends State<FormularioAutorPage> {
         salvando = false; // libera o botao de novo
       });
       // erro.toString() traz a mensagem amigavel que a API mandou.
-      mostrarMensagem(erro.toString(), Colors.red);
+      mostrarMensagem(erro.toString(), AppColors.danger);
     }
   }
 
@@ -118,56 +119,79 @@ class _FormularioAutorPageState extends State<FormularioAutorPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Form(
-          key: chaveFormulario,
-          child: ListView(
-            children: [
-              // Campo Nome (obrigatorio).
-              TextFormField(
-                controller: controllerNome,
-                decoration: const InputDecoration(labelText: 'Nome'),
-                validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'Informe o nome';
-                  }
-                  return null; // null = campo valido
-                },
-              ),
-              const SizedBox(height: 12),
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Form(
+            key: chaveFormulario,
+            child: ListView(
+              children: [
+                const Text(
+                  'Dados do autor',
+                  style: TextStyle(
+                    color: AppColors.text,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Campo Nome (obrigatorio).
+                TextFormField(
+                  controller: controllerNome,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  validator: (valor) {
+                    if (valor == null || valor.trim().isEmpty) {
+                      return 'Informe o nome';
+                    }
+                    return null; // null = campo valido
+                  },
+                ),
+                const SizedBox(height: 12),
 
-              // Campo Nacionalidade (obrigatorio).
-              TextFormField(
-                controller: controllerNacionalidade,
-                decoration: const InputDecoration(labelText: 'Nacionalidade'),
-                validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'Informe a nacionalidade';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
+                // Campo Nacionalidade (obrigatorio).
+                TextFormField(
+                  controller: controllerNacionalidade,
+                  decoration: const InputDecoration(
+                    labelText: 'Nacionalidade',
+                    prefixIcon: Icon(Icons.public),
+                  ),
+                  validator: (valor) {
+                    if (valor == null || valor.trim().isEmpty) {
+                      return 'Informe a nacionalidade';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
 
-              // Botao Salvar: mostra loading e fica TRAVADO enquanto salva
-              // (onPressed null = botao desabilitado). Isso impede envio duplicado.
-              ElevatedButton(
-                onPressed: salvando ? null : salvar,
-                child: salvando
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Salvar'),
-              ),
-              const SizedBox(height: 8),
+                // Botao Salvar: mostra loading e fica TRAVADO enquanto salva
+                // (onPressed null = botao desabilitado). Isso impede envio duplicado.
+                ElevatedButton(
+                  onPressed: salvando ? null : salvar,
+                  child: salvando
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Salvar'),
+                ),
+                const SizedBox(height: 8),
 
-              // Botao Cancelar: volta sem salvar.
-              TextButton(
-                onPressed: salvando ? null : () => Navigator.pop(context),
-                child: const Text('Cancelar'),
-              ),
-            ],
+                // Botao Cancelar: volta sem salvar.
+                TextButton(
+                  onPressed: salvando ? null : () => Navigator.pop(context),
+                  child: const Text('Cancelar'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

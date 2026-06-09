@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/home_page.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const BibliotecaApp());
@@ -18,10 +19,8 @@ class BibliotecaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Biblioteca',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.dark(),
+      debugShowCheckedModeBanner: false,
       // Primeira tela do app: a HomePage, com os botoes de Autores e Livros.
       home: const HomePage(),
     );
