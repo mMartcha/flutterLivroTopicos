@@ -1,6 +1,11 @@
+// Arquivo: lib/main.dart
+// O que faz: e o ponto de partida do app. Configura o MaterialApp (tema, titulo)
+// e define qual e a primeira tela a aparecer (a lista de livros).
+// Quando e usado: a funcao main() roda automaticamente quando o app inicia.
+
 import 'package:flutter/material.dart';
 
-import 'pages/livro_list_page.dart';
+import 'screens/lista_page.dart';
 
 void main() {
   runApp(const BibliotecaApp());
@@ -17,7 +22,8 @@ class BibliotecaApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
         useMaterial3: true,
       ),
-      home: const LivroListPage(),
+      // Primeira tela do app: a lista de livros.
+      home: const ListaPage(),
     );
   }
 }
