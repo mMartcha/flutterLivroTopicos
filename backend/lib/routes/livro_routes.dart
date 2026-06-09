@@ -69,11 +69,22 @@ class LivroRoutes {
       );
     }
 
+    // ---------------------------------------------------------------------
+    // REGRA DE NEGOCIO: o autorId precisa existir de verdade.
+    // ---------------------------------------------------------------------
+    // O livro (filho) so pode ser criado se o autor (pai) que ele referencia
+    // realmente existir na tabela de autores. Isso protege a integridade
+    // referencial: nao deixamos cadastrar um livro apontando para um autor
+    // inexistente.
+    // Aqui os campos JA estao bem formados (titulo/ano/autorId no tipo certo);
+    // o que falha e uma REGRA DE NEGOCIO. Por isso usamos o status 422
+    // (Unprocessable Entity), que significa "entendi os dados, mas eles
+    // ferem uma regra" -- diferente do 400, que e para body/campos invalidos.
     final autor = autorRepository.buscarPorId(livro.autorId);
     if (autor == null) {
       return jsonResponse(
-        {'error': 'Autor informado nao existe'},
-        statusCode: 400,
+        {'error': 'O autor informado não existe.'},
+        statusCode: 422,
       );
     }
 
@@ -106,24 +117,31 @@ class LivroRoutes {
       );
     }
 
-    final autor = autorRepository.buscarPorId(livro.autorId);
-    if (autor == null) {
-      return jsonResponse(
-        {'error': 'Autor informado nao existe'},
-        statusCode: 400,
-      );
-    }
-
-    final atualizado = repository.atualizar(livroId, livro);
-
-    if (atualizado == null) {
+    // Primeiro verificamos se o LIVRO que se quer atualizar realmente existe.
+    // Se nao existir, devolvemos 404 (nao encontrado). Fazemos essa checagem
+    // antes da regra do autor para que o 404 tenha prioridade sobre o 422.
+    final existente = repository.buscarPorId(livroId);
+    if (existente == null) {
       return jsonResponse(
         {'error': 'Livro nao encontrado'},
         statusCode: 404,
       );
     }
 
-    return jsonResponse(atualizado.toJson());
+    // Depois aplicamos a mesma regra de negocio do POST: o autorId informado
+    // precisa existir. Como os dados estao bem formados mas ferem uma regra,
+    // o status correto e 422 (e nao 400).
+    final autor = autorRepository.buscarPorId(livro.autorId);
+    if (autor == null) {
+      return jsonResponse(
+        {'error': 'O autor informado não existe.'},
+        statusCode: 422,
+      );
+    }
+
+    final atualizado = repository.atualizar(livroId, livro);
+
+    return jsonResponse(atualizado!.toJson());
   }
 
   Response _removerLivro(Request request, String id) {

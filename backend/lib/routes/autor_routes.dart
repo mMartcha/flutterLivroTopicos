@@ -93,7 +93,15 @@ class AutorRoutes {
       );
     }
 
-    final autor = Autor(nome: nome.trim());
+    final nacionalidade = data['nacionalidade'];
+    if (nacionalidade is! String || nacionalidade.trim().isEmpty) {
+      return jsonResponse(
+        {'error': 'Campo obrigatorio: nacionalidade'},
+        statusCode: 400,
+      );
+    }
+
+    final autor = Autor(nome: nome.trim(), nacionalidade: nacionalidade.trim());
     final criado = repository.criar(autor);
 
     return jsonResponse(criado.toJson(), statusCode: 201);
@@ -124,7 +132,15 @@ class AutorRoutes {
       );
     }
 
-    final autor = Autor(nome: nome.trim());
+    final nacionalidade = data['nacionalidade'];
+    if (nacionalidade is! String || nacionalidade.trim().isEmpty) {
+      return jsonResponse(
+        {'error': 'Campo obrigatorio: nacionalidade'},
+        statusCode: 400,
+      );
+    }
+
+    final autor = Autor(nome: nome.trim(), nacionalidade: nacionalidade.trim());
     final atualizado = repository.atualizar(autorId, autor);
 
     if (atualizado == null) {
@@ -154,10 +170,24 @@ class AutorRoutes {
       );
     }
 
+    // ---------------------------------------------------------------------
+    // REGRA DE INTEGRIDADE REFERENCIAL
+    // ---------------------------------------------------------------------
+    // Integridade referencial significa que um registro FILHO (Livro) nao
+    // pode "apontar" para um registro PAI (Autor) que nao existe mais.
+    // No nosso banco, cada livro tem uma coluna autor_id que referencia o
+    // autor dono dele (relacionamento 1:N: um autor tem varios livros).
+    // Se deixassemos apagar um autor que ainda tem livros, esses livros
+    // ficariam "orfaos", apontando para um autor inexistente -> o banco
+    // ficaria inconsistente.
+    // Por isso, antes de apagar, perguntamos se o autor possui livros. Se
+    // possuir, NAO apagamos e devolvemos o status 409 (Conflito), que e o
+    // codigo HTTP usado quando a operacao conflita com o estado atual dos
+    // dados.
     if (repository.possuiLivros(autorId)) {
       return jsonResponse(
-        {'error': 'Nao e possivel excluir autor com livros vinculados'},
-        statusCode: 400,
+        {'error': 'Não é possível excluir um autor que possui livros cadastrados.'},
+        statusCode: 409,
       );
     }
 

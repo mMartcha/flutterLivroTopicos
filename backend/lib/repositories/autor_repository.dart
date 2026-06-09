@@ -6,10 +6,10 @@ class AutorRepository {
 
   Autor criar(Autor autor) {
     final stmt = database.prepare(
-      'INSERT INTO autores (nome) VALUES (?)',
+      'INSERT INTO autores (nome, nacionalidade) VALUES (?, ?)',
     );
 
-    stmt.execute([autor.nome]);
+    stmt.execute([autor.nome, autor.nacionalidade]);
     stmt.close();
 
     final result = database.select('SELECT last_insert_rowid() AS id');
@@ -18,6 +18,7 @@ class AutorRepository {
     return Autor(
       id: id,
       nome: autor.nome,
+      nacionalidade: autor.nacionalidade,
     );
   }
 
@@ -29,6 +30,7 @@ class AutorRepository {
           (row) => Autor.fromRow({
             'id': row['id'],
             'nome': row['nome'],
+            'nacionalidade': row['nacionalidade'],
           }),
         )
         .toList();
@@ -46,6 +48,7 @@ class AutorRepository {
     return Autor.fromRow({
       'id': row['id'],
       'nome': row['nome'],
+      'nacionalidade': row['nacionalidade'],
     });
   }
 
@@ -54,15 +57,16 @@ class AutorRepository {
     if (existente == null) return null;
 
     final stmt = database.prepare(
-      'UPDATE autores SET nome = ? WHERE id = ?',
+      'UPDATE autores SET nome = ?, nacionalidade = ? WHERE id = ?',
     );
 
-    stmt.execute([autor.nome, id]);
+    stmt.execute([autor.nome, autor.nacionalidade, id]);
     stmt.close();
 
     return Autor(
       id: id,
       nome: autor.nome,
+      nacionalidade: autor.nacionalidade,
     );
   }
 

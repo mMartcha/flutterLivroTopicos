@@ -8,17 +8,7 @@ import 'dart:convert'; // jsonDecode / jsonEncode
 import 'package:http/http.dart' as http;
 
 import '../models/livro.dart';
-
-// Excecao simples para erros vindos da API.
-// Guardamos uma mensagem amigavel que as telas podem mostrar direto ao usuario.
-class ApiException implements Exception {
-  final String mensagem;
-
-  ApiException(this.mensagem);
-
-  @override
-  String toString() => mensagem;
-}
+import 'api_exception.dart';
 
 class LivroService {
   // URL base da API.
@@ -37,7 +27,7 @@ class LivroService {
     final resposta = await http.get(Uri.parse(_rotaLivros));
 
     if (resposta.statusCode != 200) {
-      throw ApiException('Erro ao listar livros (status ${resposta.statusCode}).');
+      throw erroDaApi(resposta, 'Erro ao listar livros');
     }
 
     // jsonDecode transforma o texto JSON em estruturas Dart (aqui, uma List).
@@ -56,7 +46,7 @@ class LivroService {
     final resposta = await http.get(Uri.parse('$_rotaLivros/$id'));
 
     if (resposta.statusCode != 200) {
-      throw ApiException('Erro ao buscar o livro (status ${resposta.statusCode}).');
+      throw erroDaApi(resposta, 'Erro ao buscar o livro');
     }
 
     final Map<String, dynamic> json =
@@ -74,8 +64,10 @@ class LivroService {
     );
 
     // Em criacao, a API normalmente responde 200 ou 201 (Created).
+    // Se o autor nao existir, a API responde 422 com uma mensagem amigavel,
+    // que o erroDaApi vai capturar e mostrar na tela.
     if (resposta.statusCode != 200 && resposta.statusCode != 201) {
-      throw ApiException('Erro ao criar o livro (status ${resposta.statusCode}).');
+      throw erroDaApi(resposta, 'Erro ao criar o livro');
     }
   }
 
@@ -88,7 +80,7 @@ class LivroService {
     );
 
     if (resposta.statusCode != 200) {
-      throw ApiException('Erro ao atualizar o livro (status ${resposta.statusCode}).');
+      throw erroDaApi(resposta, 'Erro ao atualizar o livro');
     }
   }
 
@@ -98,7 +90,7 @@ class LivroService {
 
     // Em exclusao, a API costuma responder 200 ou 204 (sem conteudo).
     if (resposta.statusCode != 200 && resposta.statusCode != 204) {
-      throw ApiException('Erro ao excluir o livro (status ${resposta.statusCode}).');
+      throw erroDaApi(resposta, 'Erro ao excluir o livro');
     }
   }
 }

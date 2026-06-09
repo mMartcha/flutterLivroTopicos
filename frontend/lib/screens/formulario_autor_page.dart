@@ -1,27 +1,27 @@
-// Arquivo: lib/screens/formulario_page.dart
-// O que faz: formulario UNICO que serve para CRIAR e tambem para EDITAR um livro.
-// Quando e usado: ao tocar no "+" na lista (modo criacao) ou no lapis na tela
-// de detalhe (modo edicao).
+// Arquivo: lib/screens/formulario_autor_page.dart
+// O que faz: formulario UNICO que serve para CRIAR e tambem para EDITAR um autor.
+// Quando e usado: ao tocar no "+" na lista de autores (modo criacao) ou no lapis
+// na tela de detalhe do autor (modo edicao).
 
 import 'package:flutter/material.dart';
 
-import '../models/livro.dart';
-import '../services/livro_service.dart';
+import '../models/autor.dart';
+import '../services/autor_service.dart';
 
-class FormularioPage extends StatefulWidget {
+class FormularioAutorPage extends StatefulWidget {
   // Parametro OPCIONAL:
   // - se vier null      -> modo CRIACAO
-  // - se vier um livro  -> modo EDICAO
-  final Livro? livro;
+  // - se vier um autor  -> modo EDICAO
+  final Autor? autor;
 
-  const FormularioPage({super.key, this.livro});
+  const FormularioAutorPage({super.key, this.autor});
 
   @override
-  State<FormularioPage> createState() => _FormularioPageState();
+  State<FormularioAutorPage> createState() => _FormularioAutorPageState();
 }
 
-class _FormularioPageState extends State<FormularioPage> {
-  final LivroService servico = LivroService();
+class _FormularioAutorPageState extends State<FormularioAutorPage> {
+  final AutorService servico = AutorService();
 
   // GlobalKey<FormState>: e o "controle remoto" do Form.
   // Usamos para mandar o formulario validar todos os campos de uma vez.
@@ -29,24 +29,22 @@ class _FormularioPageState extends State<FormularioPage> {
 
   // TextEditingController: controla o texto de cada campo.
   // Com ele conseguimos LER o que o usuario digitou e tambem PRE-PREENCHER o campo.
-  final TextEditingController controllerTitulo = TextEditingController();
-  final TextEditingController controllerAno = TextEditingController();
-  final TextEditingController controllerAutorId = TextEditingController();
+  final TextEditingController controllerNome = TextEditingController();
+  final TextEditingController controllerNacionalidade = TextEditingController();
 
   // Trava o botao Salvar enquanto a requisicao esta em andamento.
   bool salvando = false;
 
   // Diz se estamos editando (true) ou criando (false).
-  bool get modoEdicao => widget.livro != null;
+  bool get modoEdicao => widget.autor != null;
 
   @override
   void initState() {
     super.initState();
-    // Se for edicao, preenchemos os campos com os valores do livro recebido.
+    // Se for edicao, preenchemos os campos com os valores do autor recebido.
     if (modoEdicao) {
-      controllerTitulo.text = widget.livro!.titulo;
-      controllerAno.text = widget.livro!.ano.toString();
-      controllerAutorId.text = widget.livro!.autorId.toString();
+      controllerNome.text = widget.autor!.nome;
+      controllerNacionalidade.text = widget.autor!.nacionalidade;
     }
   }
 
@@ -54,9 +52,8 @@ class _FormularioPageState extends State<FormularioPage> {
   void dispose() {
     // dispose libera os controllers da memoria quando a tela e fechada.
     // Se esquecermos disso, o app fica vazando memoria (memory leak).
-    controllerTitulo.dispose();
-    controllerAno.dispose();
-    controllerAutorId.dispose();
+    controllerNome.dispose();
+    controllerNacionalidade.dispose();
     super.dispose();
   }
 
@@ -72,25 +69,27 @@ class _FormularioPageState extends State<FormularioPage> {
       salvando = true; // trava o botao para evitar envio duplicado
     });
 
-    // Monta o objeto Livro com o que foi digitado.
+    // Monta o objeto Autor com o que foi digitado.
     // No modo criacao o id ainda nao existe, entao usamos 0 (a API gera o id real).
-    final livroDigitado = Livro(
-      id: modoEdicao ? widget.livro!.id : 0,
-      titulo: controllerTitulo.text,
-      ano: int.parse(controllerAno.text),
-      autorId: int.parse(controllerAutorId.text),
+    final autorDigitado = Autor(
+      id: modoEdicao ? widget.autor!.id : 0,
+      nome: controllerNome.text.trim(),
+      nacionalidade: controllerNacionalidade.text.trim(),
     );
 
     try {
       if (modoEdicao) {
-        await servico.atualizar(livroDigitado);
+        await servico.atualizar(autorDigitado);
       } else {
-        await servico.criar(livroDigitado);
+        await servico.criar(autorDigitado);
       }
 
       // mounted confirma que a tela ainda existe antes de usar o context.
       if (!mounted) return;
-      mostrarMensagem('Livro salvo com sucesso!', Colors.green);
+      mostrarMensagem(
+        modoEdicao ? 'Atualizado com sucesso' : 'Criado com sucesso',
+        Colors.green,
+      );
 
       // Volta para a tela anterior enviando "true" (deu certo, recarregue).
       Navigator.pop(context, true);
@@ -98,7 +97,8 @@ class _FormularioPageState extends State<FormularioPage> {
       setState(() {
         salvando = false; // libera o botao de novo
       });
-      mostrarMensagem('Erro ao salvar: $erro', Colors.red);
+      // erro.toString() traz a mensagem amigavel que a API mandou.
+      mostrarMensagem(erro.toString(), Colors.red);
     }
   }
 
@@ -114,7 +114,7 @@ class _FormularioPageState extends State<FormularioPage> {
     return Scaffold(
       appBar: AppBar(
         // O titulo muda conforme o modo (criar ou editar).
-        title: Text(modoEdicao ? 'Editar Livro' : 'Novo Livro'),
+        title: Text(modoEdicao ? 'Editar Autor' : 'Novo Autor'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -122,47 +122,26 @@ class _FormularioPageState extends State<FormularioPage> {
           key: chaveFormulario,
           child: ListView(
             children: [
-              // Campo Titulo (obrigatorio).
+              // Campo Nome (obrigatorio).
               TextFormField(
-                controller: controllerTitulo,
-                decoration: const InputDecoration(labelText: 'Titulo'),
+                controller: controllerNome,
+                decoration: const InputDecoration(labelText: 'Nome'),
                 validator: (valor) {
                   if (valor == null || valor.trim().isEmpty) {
-                    return 'Informe o titulo';
+                    return 'Informe o nome';
                   }
                   return null; // null = campo valido
                 },
               ),
               const SizedBox(height: 12),
 
-              // Campo Ano (obrigatorio, precisa ser numero).
+              // Campo Nacionalidade (obrigatorio).
               TextFormField(
-                controller: controllerAno,
-                decoration: const InputDecoration(labelText: 'Ano'),
-                keyboardType: TextInputType.number,
+                controller: controllerNacionalidade,
+                decoration: const InputDecoration(labelText: 'Nacionalidade'),
                 validator: (valor) {
                   if (valor == null || valor.trim().isEmpty) {
-                    return 'Informe o ano';
-                  }
-                  if (int.tryParse(valor) == null) {
-                    return 'Ano deve ser um numero';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-
-              // Campo Autor ID (obrigatorio, precisa ser numero).
-              TextFormField(
-                controller: controllerAutorId,
-                decoration: const InputDecoration(labelText: 'Autor ID'),
-                keyboardType: TextInputType.number,
-                validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'Informe o Autor ID';
-                  }
-                  if (int.tryParse(valor) == null) {
-                    return 'Autor ID deve ser um numero';
+                    return 'Informe a nacionalidade';
                   }
                   return null;
                 },
@@ -170,7 +149,7 @@ class _FormularioPageState extends State<FormularioPage> {
               const SizedBox(height: 24),
 
               // Botao Salvar: mostra loading e fica TRAVADO enquanto salva
-              // (onPressed null = botao desabilitado).
+              // (onPressed null = botao desabilitado). Isso impede envio duplicado.
               ElevatedButton(
                 onPressed: salvando ? null : salvar,
                 child: salvando
