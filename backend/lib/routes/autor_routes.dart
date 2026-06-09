@@ -37,7 +37,7 @@ class AutorRoutes {
     final autorId = int.tryParse(id);
     if (autorId == null) {
       return jsonResponse(
-        {'erro': 'ID invalido'},
+        {'error': 'ID invalido'},
         statusCode: 400,
       );
     }
@@ -45,7 +45,7 @@ class AutorRoutes {
     final autor = repository.buscarPorId(autorId);
     if (autor == null) {
       return jsonResponse(
-        {'erro': 'Autor nao encontrado'},
+        {'error': 'Autor nao encontrado'},
         statusCode: 404,
       );
     }
@@ -57,7 +57,7 @@ class AutorRoutes {
     final autorId = int.tryParse(id);
     if (autorId == null) {
       return jsonResponse(
-        {'erro': 'ID invalido'},
+        {'error': 'ID invalido'},
         statusCode: 400,
       );
     }
@@ -65,7 +65,7 @@ class AutorRoutes {
     final autor = repository.buscarPorId(autorId);
     if (autor == null) {
       return jsonResponse(
-        {'erro': 'Autor nao encontrado'},
+        {'error': 'Autor nao encontrado'},
         statusCode: 404,
       );
     }
@@ -80,7 +80,7 @@ class AutorRoutes {
     final data = await _lerBodyJson(request);
     if (data == null) {
       return jsonResponse(
-        {'erro': 'Body invalido'},
+        {'error': 'Body invalido'},
         statusCode: 400,
       );
     }
@@ -88,7 +88,7 @@ class AutorRoutes {
     final nome = data['nome'];
     if (nome is! String || nome.trim().isEmpty) {
       return jsonResponse(
-        {'erro': 'Campo obrigatorio: nome'},
+        {'error': 'Campo obrigatorio: nome'},
         statusCode: 400,
       );
     }
@@ -103,7 +103,7 @@ class AutorRoutes {
     final autorId = int.tryParse(id);
     if (autorId == null) {
       return jsonResponse(
-        {'erro': 'ID invalido'},
+        {'error': 'ID invalido'},
         statusCode: 400,
       );
     }
@@ -111,7 +111,7 @@ class AutorRoutes {
     final data = await _lerBodyJson(request);
     if (data == null) {
       return jsonResponse(
-        {'erro': 'Body invalido'},
+        {'error': 'Body invalido'},
         statusCode: 400,
       );
     }
@@ -119,7 +119,7 @@ class AutorRoutes {
     final nome = data['nome'];
     if (nome is! String || nome.trim().isEmpty) {
       return jsonResponse(
-        {'erro': 'Campo obrigatorio: nome'},
+        {'error': 'Campo obrigatorio: nome'},
         statusCode: 400,
       );
     }
@@ -129,7 +129,7 @@ class AutorRoutes {
 
     if (atualizado == null) {
       return jsonResponse(
-        {'erro': 'Autor nao encontrado'},
+        {'error': 'Autor nao encontrado'},
         statusCode: 404,
       );
     }
@@ -141,7 +141,7 @@ class AutorRoutes {
     final autorId = int.tryParse(id);
     if (autorId == null) {
       return jsonResponse(
-        {'erro': 'ID invalido'},
+        {'error': 'ID invalido'},
         statusCode: 400,
       );
     }
@@ -149,14 +149,14 @@ class AutorRoutes {
     final autor = repository.buscarPorId(autorId);
     if (autor == null) {
       return jsonResponse(
-        {'erro': 'Autor nao encontrado'},
+        {'error': 'Autor nao encontrado'},
         statusCode: 404,
       );
     }
 
     if (repository.possuiLivros(autorId)) {
       return jsonResponse(
-        {'erro': 'Nao e possivel excluir autor com livros vinculados'},
+        {'error': 'Nao e possivel excluir autor com livros vinculados'},
         statusCode: 400,
       );
     }

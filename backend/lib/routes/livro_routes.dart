@@ -36,7 +36,7 @@ class LivroRoutes {
     final livroId = int.tryParse(id);
     if (livroId == null) {
       return jsonResponse(
-        {'erro': 'ID invalido'},
+        {'error': 'ID invalido'},
         statusCode: 400,
       );
     }
@@ -44,7 +44,7 @@ class LivroRoutes {
     final livro = repository.buscarPorId(livroId);
     if (livro == null) {
       return jsonResponse(
-        {'erro': 'Livro nao encontrado'},
+        {'error': 'Livro nao encontrado'},
         statusCode: 404,
       );
     }
@@ -56,7 +56,7 @@ class LivroRoutes {
     final data = await _lerBodyJson(request);
     if (data == null) {
       return jsonResponse(
-        {'erro': 'Body invalido'},
+        {'error': 'Body invalido'},
         statusCode: 400,
       );
     }
@@ -64,7 +64,7 @@ class LivroRoutes {
     final livro = _validarLivro(data);
     if (livro == null) {
       return jsonResponse(
-        {'erro': 'Campos obrigatorios: titulo, ano, autorId'},
+        {'error': 'Campos obrigatorios: titulo, ano, autorId'},
         statusCode: 400,
       );
     }
@@ -72,7 +72,7 @@ class LivroRoutes {
     final autor = autorRepository.buscarPorId(livro.autorId);
     if (autor == null) {
       return jsonResponse(
-        {'erro': 'Autor informado nao existe'},
+        {'error': 'Autor informado nao existe'},
         statusCode: 400,
       );
     }
@@ -85,7 +85,7 @@ class LivroRoutes {
     final livroId = int.tryParse(id);
     if (livroId == null) {
       return jsonResponse(
-        {'erro': 'ID invalido'},
+        {'error': 'ID invalido'},
         statusCode: 400,
       );
     }
@@ -93,7 +93,7 @@ class LivroRoutes {
     final data = await _lerBodyJson(request);
     if (data == null) {
       return jsonResponse(
-        {'erro': 'Body invalido'},
+        {'error': 'Body invalido'},
         statusCode: 400,
       );
     }
@@ -101,7 +101,7 @@ class LivroRoutes {
     final livro = _validarLivro(data);
     if (livro == null) {
       return jsonResponse(
-        {'erro': 'Campos obrigatorios: titulo, ano, autorId'},
+        {'error': 'Campos obrigatorios: titulo, ano, autorId'},
         statusCode: 400,
       );
     }
@@ -109,7 +109,7 @@ class LivroRoutes {
     final autor = autorRepository.buscarPorId(livro.autorId);
     if (autor == null) {
       return jsonResponse(
-        {'erro': 'Autor informado nao existe'},
+        {'error': 'Autor informado nao existe'},
         statusCode: 400,
       );
     }
@@ -118,7 +118,7 @@ class LivroRoutes {
 
     if (atualizado == null) {
       return jsonResponse(
-        {'erro': 'Livro nao encontrado'},
+        {'error': 'Livro nao encontrado'},
         statusCode: 404,
       );
     }
@@ -130,7 +130,7 @@ class LivroRoutes {
     final livroId = int.tryParse(id);
     if (livroId == null) {
       return jsonResponse(
-        {'erro': 'ID invalido'},
+        {'error': 'ID invalido'},
         statusCode: 400,
       );
     }
@@ -139,7 +139,7 @@ class LivroRoutes {
 
     if (!removido) {
       return jsonResponse(
-        {'erro': 'Livro nao encontrado'},
+        {'error': 'Livro nao encontrado'},
         statusCode: 404,
       );
     }
