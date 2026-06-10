@@ -1,6 +1,6 @@
 {
-    "name": "biblioteca_frontend",
-    "short_name": "biblioteca_frontend",
+    "name": "MindLib",
+    "short_name": "MindLib",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

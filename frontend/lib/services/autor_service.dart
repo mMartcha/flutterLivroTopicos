@@ -1,9 +1,4 @@
-// Arquivo: lib/services/autor_service.dart
-// O que faz: concentra TODA a comunicacao com a API REST de autores.
-// Quando e usado: as telas de autor chamam estes metodos (listar, buscarPorId,
-// criar, atualizar, deletar, listarLivrosDoAutor) sem precisar conhecer HTTP.
-
-import 'dart:convert'; // jsonDecode / jsonEncode
+import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
@@ -12,17 +7,14 @@ import '../models/livro.dart';
 import 'api_exception.dart';
 
 class AutorService {
-  // URL base da API.
   // ATENCAO ao rodar o app:
   // - No EMULADOR ANDROID use 'http://10.0.2.2:8080'
   //   (10.0.2.2 e o "localhost" do seu PC visto de dentro do emulador).
   // - No iOS, no NAVEGADOR (web) e no DESKTOP use 'http://localhost:8080'.
   static const String _urlBase = 'http://10.0.2.2:8080';
 
-  // Rota dos autores, montada a partir da URL base.
   static const String _rotaAutores = '$_urlBase/autores';
 
-  // GET /autores -> devolve a lista completa de autores.
   Future<List<Autor>> listar() async {
     final resposta = await http.get(Uri.parse(_rotaAutores));
 
@@ -39,7 +31,6 @@ class AutorService {
     return autores;
   }
 
-  // GET /autores/{id} -> devolve um unico autor pelo id.
   Future<Autor> buscarPorId(int id) async {
     final resposta = await http.get(Uri.parse('$_rotaAutores/$id'));
 
@@ -52,8 +43,6 @@ class AutorService {
     return Autor.fromJson(json);
   }
 
-  // GET /autores/{id}/livros -> devolve os livros daquele autor.
-  // Usado na tela de detalhe do autor, na secao "Livros deste autor".
   Future<List<Livro>> listarLivrosDoAutor(int autorId) async {
     final resposta = await http.get(Uri.parse('$_rotaAutores/$autorId/livros'));
 
@@ -70,7 +59,6 @@ class AutorService {
     return livros;
   }
 
-  // POST /autores -> cria um novo autor.
   Future<void> criar(Autor autor) async {
     final resposta = await http.post(
       Uri.parse(_rotaAutores),
@@ -83,7 +71,6 @@ class AutorService {
     }
   }
 
-  // PUT /autores/{id} -> atualiza um autor existente.
   Future<void> atualizar(Autor autor) async {
     final resposta = await http.put(
       Uri.parse('$_rotaAutores/${autor.id}'),
@@ -96,9 +83,6 @@ class AutorService {
     }
   }
 
-  // DELETE /autores/{id} -> exclui um autor pelo id.
-  // Se o autor tiver livros, a API responde 409 com uma mensagem amigavel,
-  // que o erroDaApi captura e a tela mostra num SnackBar vermelho.
   Future<void> deletar(int id) async {
     final resposta = await http.delete(Uri.parse('$_rotaAutores/$id'));
 

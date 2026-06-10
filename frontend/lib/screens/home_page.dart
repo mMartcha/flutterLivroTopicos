@@ -1,23 +1,15 @@
-// Arquivo: lib/screens/home_page.dart
-// O que faz: e a tela inicial do app. Mostra dois botoes grandes que levam
-// para a lista de Autores e para a lista de Livros.
-// Quando e usado: e a primeira tela que aparece quando o app abre.
-
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import 'lista_autores_page.dart';
 import 'lista_livros_page.dart';
 
-// StatelessWidget porque esta tela NAO muda com o tempo: ela so mostra
-// dois botoes fixos. (Telas que mudam sozinhas usam StatefulWidget.)
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Biblioteca')),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
@@ -39,7 +31,7 @@ class HomePage extends StatelessWidget {
                   ),
                   SizedBox(height: 18),
                   Text(
-                    'Biblioteca inteligente',
+                    'MindLib',
                     style: TextStyle(
                       color: AppColors.text,
                       fontSize: 28,
@@ -48,7 +40,7 @@ class HomePage extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Gerencie autores e livros em uma interface escura, direta e pronta para consulta.',
+                    'Gerencie autores e livros em uma interface direta e pronta para consulta.',
                     style: TextStyle(
                       color: AppColors.textMuted,
                       fontSize: 15,
@@ -65,7 +57,6 @@ class HomePage extends StatelessWidget {
               icone: Icons.person,
               legenda: 'Cadastro, nacionalidade e livros vinculados',
               aoTocar: () {
-                // Navigator.push abre a tela da lista de autores por cima desta.
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -95,7 +86,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Monta um botao grande e alto, para reaproveitar o mesmo visual nos dois.
   Widget montarBotao({
     required BuildContext context,
     required String texto,
