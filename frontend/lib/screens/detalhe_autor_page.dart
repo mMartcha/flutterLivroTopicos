@@ -5,6 +5,7 @@ import '../models/livro.dart';
 import '../services/autor_service.dart';
 import '../theme/app_theme.dart';
 import 'formulario_autor_page.dart';
+import 'detalhe_livro_page.dart';
 
 class DetalheAutorPage extends StatefulWidget {
   final Autor autor;
@@ -101,6 +102,20 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
         );
       },
     );
+  }
+
+  void abrirDetalheLivro(Livro livro) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetalheLivroPage(
+          livro: livro,
+          nomeAutor: autor.nome,
+        ),
+      ),
+    ).then((_) {
+      buscarLivrosDoAutor();
+    });
   }
 
   Future<void> excluir() async {
@@ -234,6 +249,11 @@ class _DetalheAutorPageState extends State<DetalheAutorPage> {
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             subtitle: Text('Ano: ${livro.ano}'),
+            trailing: const Icon(
+              Icons.chevron_right,
+              color: AppColors.textSoft,
+            ),
+            onTap: () => abrirDetalheLivro(livro),
           ),
         );
       }).toList(),

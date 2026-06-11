@@ -4,6 +4,7 @@ import '../models/livro.dart';
 import '../services/autor_service.dart';
 import '../services/livro_service.dart';
 import '../theme/app_theme.dart';
+import 'detalhe_autor_page.dart';
 import 'formulario_livro_page.dart';
 
 class DetalheLivroPage extends StatefulWidget {
@@ -28,6 +29,7 @@ class _DetalheLivroPageState extends State<DetalheLivroPage> {
   late String nomeAutor;
 
   bool excluindo = false;
+  bool abrindoAutor = false;
 
   @override
   void initState() {
@@ -86,6 +88,44 @@ class _DetalheLivroPageState extends State<DetalheLivroPage> {
         );
       },
     );
+  }
+
+  Future<void> abrirDetalheAutor() async {
+    setState(() {
+      abrindoAutor = true;
+    });
+
+    try {
+      final autor = await servicoAutor.buscarPorId(livro.autorId);
+
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetalheAutorPage(autor: autor),
+        ),
+      ).then((_) async {
+        try {
+          final atualizado = await servico.buscarPorId(livro.id);
+          final autorAtualizado =
+              await servicoAutor.buscarPorId(atualizado.autorId);
+
+          if (!mounted) return;
+          setState(() {
+            livro = atualizado;
+            nomeAutor = autorAtualizado.nome;
+          });
+        } catch (_) {}
+      });
+    } catch (erro) {
+      mostrarMensagem(erro.toString(), AppColors.danger);
+    } finally {
+      if (mounted) {
+        setState(() {
+          abrindoAutor = false;
+        });
+      }
+    }
   }
 
   Future<void> excluir() async {
@@ -172,8 +212,73 @@ class _DetalheLivroPageState extends State<DetalheLivroPage> {
             const Divider(),
             montarLinha('Ano', '${livro.ano}'),
             const Divider(),
-            montarLinha('Autor', nomeAutor),
+            montarAutor(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget montarAutor() {
+    return Material(
+      color: AppColors.chip,
+      borderRadius: BorderRadius.circular(8),
+      child: InkWell(
+        onTap: abrindoAutor ? null : abrirDetalheAutor,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceGlass,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.person,
+                  color: AppColors.primarySoft,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Autor',
+                      style: TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      nomeAutor,
+                      style: const TextStyle(
+                        color: AppColors.text,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              abrindoAutor
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(
+                      Icons.chevron_right,
+                      color: AppColors.textSoft,
+                    ),
+            ],
+          ),
         ),
       ),
     );
